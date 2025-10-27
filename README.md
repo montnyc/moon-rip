@@ -1,34 +1,21 @@
 # moonrip
 
-> Download online videos and convert them to audio with AI-powered cover art selection
+Download online videos and convert them to audio with AI-powered cover art selection.
 
-I download a lot of live sets and DJ mixes. I wanted a simple way to grab the audio with nice cover art automatically selected from the video, so I built this.
+I download a lot of live sets and DJ mixes. I wanted a simple way to grab the audio with cover art automatically selected from the video, so I built this.
 
-A simple, interactive CLI tool that downloads online videos, extracts high-quality audio, and uses Moondream (small, powerful vision model) to automatically pick the best frame for album cover art.
+## How it works
 
-## What it does
-
-1. You paste a video URL
-2. Pick your audio format (MP3, M4A, or WAV)
-3. Optionally describe what kind of cover art you want ("happy concert scene", "vibrant colors", etc.)
-4. moonrip downloads, converts, extracts frames, and uses Moondream to pick the perfect cover art
-5. You get a beautiful audio file with embedded album art
+1. Paste a video URL
+2. Pick audio format (MP3, M4A, or WAV)
+3. Optionally describe what kind of cover art you want
+4. Downloads video, extracts audio, analyzes frames with Moondream, embeds selected cover art
 
 ## Prerequisites
 
-Install these first:
-
-- **[Bun](https://bun.sh)** - Fast JavaScript runtime
-- **[yt-dlp](https://github.com/yt-dlp/yt-dlp)** - Video downloader
-  ```bash
-  brew install yt-dlp  # macOS
-  # or: sudo apt install yt-dlp  # Linux
-  ```
-- **[ffmpeg](https://ffmpeg.org)** - Media converter
-  ```bash
-  brew install ffmpeg  # macOS
-  # or: sudo apt install ffmpeg  # Linux
-  ```
+- [Bun](https://bun.sh)
+- [yt-dlp](https://github.com/yt-dlp/yt-dlp) - `brew install yt-dlp`
+- [ffmpeg](https://ffmpeg.org) - `brew install ffmpeg`
 
 ## Installation
 
@@ -40,54 +27,26 @@ bun install
 
 ## Usage
 
-**Option 1: With local Moondream server (recommended)**
+Run `bun start` and follow the prompts.
 
-Start Moondream server in one terminal:
+Optionally run a local Moondream server first (faster):
 ```bash
 cd moondream-station
 ./venv/bin/moondream-station interactive
 ```
 
-Then run moonrip in another terminal:
+Or use the cloud API:
 ```bash
-bun start
+export MOONDREAM_API_KEY=your_key_here  # https://console.moondream.ai
 ```
 
-**Option 2: With cloud API**
+## Tech
 
-Just run:
-```bash
-bun start
-```
-
-Set your API key for better results:
-```bash
-export MOONDREAM_API_KEY=your_key_here  # Get key at https://console.moondream.ai
-```
-
-## Goals
-
-- **Simple UX** - Just paste a URL and answer a few questions
-- **Visual selection** - Automatically picks the best frame for cover art, or matches your description
-- **High Quality** - Best available audio quality, properly tagged with metadata
-- **Type-Safe** - Built with Effect for robust error handling
-- **Fast** - Uses Bun for maximum performance
-
-## Tech Stack
-
-- **[Bun](https://bun.sh)** - Runtime
-- **[Effect](https://effect.website)** - Type-safe error handling
-- **[Moondream](https://moondream.ai)** - Vision AI for cover art selection
-- **[OpenTUI](https://github.com/sst/opentui)** - Terminal UI
-- **yt-dlp** - Video downloading
-- **ffmpeg** - Audio conversion & metadata
-
-## Development
-
-Run tests:
-```bash
-bun test
-```
+- [Bun](https://bun.sh)
+- [Effect](https://effect.website)
+- [Moondream](https://moondream.ai)
+- [yt-dlp](https://github.com/yt-dlp/yt-dlp)
+- [ffmpeg](https://ffmpeg.org)
 
 ## License
 
