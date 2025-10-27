@@ -1,23 +1,23 @@
-# 🌙 moonrip
+# moonrip
 
-> Download YouTube videos and convert them to audio with AI-powered cover art selection
+> Download online videos and convert them to audio with AI-powered cover art selection
 
-A simple, interactive CLI tool that downloads YouTube videos, extracts high-quality audio, and uses AI to automatically pick the best frame for album cover art.
+A simple, interactive CLI tool that downloads online videos, extracts high-quality audio, and uses AI to automatically pick the best frame for album cover art.
 
-## ✨ What it does
+## What it does
 
-1. You paste a YouTube URL
+1. You paste a video URL
 2. Pick your audio format (MP3, M4A, or WAV)
 3. Optionally describe what kind of cover art you want ("happy concert scene", "vibrant colors", etc.)
 4. moonrip downloads, converts, extracts frames, and uses AI to pick the perfect cover art
-5. You get a beautiful audio file with embedded album art!
+5. You get a beautiful audio file with embedded album art
 
-## 📋 Prerequisites
+## Prerequisites
 
 Install these first:
 
 - **[Bun](https://bun.sh)** - Fast JavaScript runtime
-- **[yt-dlp](https://github.com/yt-dlp/yt-dlp)** - YouTube downloader
+- **[yt-dlp](https://github.com/yt-dlp/yt-dlp)** - Video downloader
   ```bash
   brew install yt-dlp  # macOS
   # or: sudo apt install yt-dlp  # Linux
@@ -28,7 +28,7 @@ Install these first:
   # or: sudo apt install ffmpeg  # Linux
   ```
 
-## 🚀 Installation
+## Installation
 
 ```bash
 git clone https://github.com/yourusername/moonrip.git
@@ -36,7 +36,7 @@ cd moonrip
 bun install
 ```
 
-## 💻 Usage
+## Usage
 
 **Option 1: With local Moondream server (recommended)**
 
@@ -65,7 +65,7 @@ export MOONDREAM_API_KEY=your_key_here  # Get free key at https://console.moondr
 
 Then follow the interactive prompts!
 
-## 🎯 Goals
+## Goals
 
 - **Simple UX** - Just paste a URL and answer a few questions
 - **Smart AI** - Automatically picks the best frame for cover art, or matches your description
@@ -73,7 +73,7 @@ Then follow the interactive prompts!
 - **Type-Safe** - Built with Effect for robust error handling
 - **Fast** - Uses Bun for maximum performance
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 - **[Bun](https://bun.sh)** - Runtime
 - **[Effect](https://effect.website)** - Type-safe error handling
@@ -82,43 +82,44 @@ Then follow the interactive prompts!
 - **yt-dlp** - Video downloading
 - **ffmpeg** - Audio conversion & metadata
 
-## 📝 Example
+## Example
 
 ```bash
 $ bun start
 
 ╔══════════════════════════════════════════╗
-║      🌙 moonrip - YouTube to Audio       ║
+║       moonrip - Video to Audio           ║
+║   with AI-powered cover art selection    ║
 ╚══════════════════════════════════════════╝
 
-⚙️  Checking dependencies...
-   ✓ yt-dlp found
-   ✓ ffmpeg found
-   ✓ Connected to local Moondream server
+Checking dependencies...
+   * yt-dlp found
+   * ffmpeg found
+   * Connected to local Moondream server
 
-🌙 Welcome to moonrip!
+Welcome to moonrip!
 
-📺 Enter YouTube URL: https://www.youtube.com/watch?v=dQw4w9WgXcQ
+Enter video URL: https://www.youtube.com/watch?v=dQw4w9WgXcQ
 
-🎵 Select audio format:
+Select audio format:
   1. MP3 (most compatible)
   2. M4A (better quality, smaller size)
   3. WAV (lossless)
 
 Choice (1-3, default: 1): 1
 
-🎨 Cover art selection:
+Cover art selection:
   Describe your ideal cover image (or press Enter):
 
-📁 Output directory (default: current): ~/Music
+Output directory (default: current): ~/Music
 
-🚀 Starting conversion...
+Starting conversion...
 
-✅ Complete!
-📍 Saved to: /Users/you/Music/Rick Astley - Never Gonna Give You Up.mp3
+Complete!
+Saved to: /Users/you/Music/Rick Astley - Never Gonna Give You Up.mp3
 ```
 
-## 🧪 Development
+## Development
 
 Run tests:
 ```bash
@@ -127,10 +128,10 @@ bun test
 
 See `CLAUDE.md` for detailed architecture and development notes.
 
-## 📄 License
+## License
 
 MIT
 
-## 🙏 Credits
+## Credits
 
 Built with [yt-dlp](https://github.com/yt-dlp/yt-dlp), [ffmpeg](https://ffmpeg.org), [Moondream](https://moondream.ai), [Effect](https://effect.website), and [Bun](https://bun.sh).
