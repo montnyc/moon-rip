@@ -7,7 +7,8 @@ export class DownloadError extends Data.TaggedError("DownloadError")<{
 }> {}
 
 export interface VideoInfo {
-  videoPath: string;
+  videoPath: string;  // Path to video file (for frame extraction)
+  audioPath?: string; // Path to audio file if separate (e.g., mp3)
   title: string;
   artist?: string;
   thumbnail?: string;
@@ -76,45 +77,48 @@ export const downloadVideo = (url: string): Effect.Effect<VideoInfo, DownloadErr
     // Parse the output
     const [videoId, title, artist, thumbnail] = result.split("|");
 
-    // Find the downloaded video file
-    const videoFiles = yield* Effect.tryPromise({
+    // Find the downloaded files
+    const files = yield* Effect.tryPromise({
       try: async () => {
-        // List all files in temp dir for debugging
         const allFiles = await Array.fromAsync(
           new Bun.Glob("*").scan({ cwd: tempDir })
         );
 
-        // Filter for video files (not images)
-        const videos = allFiles.filter(
-          (f) => !f.endsWith(".jpg") && !f.endsWith(".webp") && !f.endsWith(".png")
-        );
-
-        // If we have multiple files, prefer ones matching the video ID
-        if (videos.length > 1) {
-          const matching = videos.filter((f) => f.includes(videoId || ""));
-          return matching.length > 0 ? matching : videos;
-        }
-
-        return videos;
+        return {
+          all: allFiles,
+          videos: allFiles.filter(f =>
+            (f.endsWith(".mp4") || f.endsWith(".mkv") || f.endsWith(".webm") || f.endsWith(".avi")) &&
+            !f.includes("_converted")
+          ),
+          audio: allFiles.filter(f =>
+            (f.endsWith(".mp3") || f.endsWith(".m4a")) &&
+            !f.includes("_converted")
+          ),
+        };
       },
       catch: (error) =>
         new DownloadError({
-          message: `Failed to find downloaded video: ${error}`,
+          message: `Failed to list downloaded files: ${error}`,
         }),
     });
 
-    if (videoFiles.length === 0) {
+    // Find the video file (for frame extraction)
+    const videoFile = files.videos[0];
+    if (!videoFile) {
       yield* Effect.fail(
         new DownloadError({
-          message: "No video file found after download. Check if yt-dlp completed successfully.",
+          message: "No video file found after download. yt-dlp may have downloaded audio-only.",
         })
       );
     }
 
-    const videoPath = path.join(tempDir, videoFiles[0]!);
+    const videoPath = path.join(tempDir, videoFile);
+    const audioFile = files.audio[0];
+    const audioPath = audioFile ? path.join(tempDir, audioFile) : undefined;
 
     return {
       videoPath,
+      audioPath,
       title: title || "Unknown",
       artist: artist || undefined,
       thumbnail: thumbnail || undefined,

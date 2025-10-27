@@ -8,7 +8,14 @@ export class ConversionError extends Data.TaggedError("ConversionError")<{
 
 export const convertToMp3 = (videoInfo: VideoInfo): Effect.Effect<string, ConversionError> =>
   Effect.gen(function* () {
-    const outputPath = videoInfo.videoPath.replace(path.extname(videoInfo.videoPath), ".mp3");
+    // If yt-dlp already extracted audio, use that
+    if (videoInfo.audioPath) {
+      return videoInfo.audioPath;
+    }
+
+    // Otherwise, extract audio from video
+    const inputExt = path.extname(videoInfo.videoPath);
+    const outputPath = videoInfo.videoPath.replace(inputExt, "_converted.mp3");
 
     yield* Effect.tryPromise({
       try: async () => {
