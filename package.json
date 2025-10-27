@@ -1,0 +1,28 @@
+{
+  "name": "moon-rip",
+  "module": "index.ts",
+  "type": "module",
+  "private": true,
+  "bin": {
+    "moonrip": "./dist/index.js"
+  },
+  "scripts": {
+    "start": "bun run index.ts",
+    "setup:moondream": "chmod +x scripts/setup-moondream.sh && ./scripts/setup-moondream.sh",
+    "build": "bun build index.ts --outdir dist --target bun --minify",
+    "test": "bun test",
+    "test:watch": "bun test --watch"
+  },
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "@opentui/react": "^0.1.30",
+    "effect": "^3.18.4",
+    "moondream": "^0.1.1",
+    "react": "^19.2.0"
+  }
+}
