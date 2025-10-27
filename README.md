@@ -2,14 +2,16 @@
 
 > Download online videos and convert them to audio with AI-powered cover art selection
 
-A simple, interactive CLI tool that downloads online videos, extracts high-quality audio, and uses AI to automatically pick the best frame for album cover art.
+I download a lot of live sets and DJ mixes. I wanted a simple way to grab the audio with nice cover art automatically selected from the video, so I built this.
+
+A simple, interactive CLI tool that downloads online videos, extracts high-quality audio, and uses Moondream (small, powerful vision model) to automatically pick the best frame for album cover art.
 
 ## What it does
 
 1. You paste a video URL
 2. Pick your audio format (MP3, M4A, or WAV)
 3. Optionally describe what kind of cover art you want ("happy concert scene", "vibrant colors", etc.)
-4. moonrip downloads, converts, extracts frames, and uses AI to pick the perfect cover art
+4. moonrip downloads, converts, extracts frames, and uses Moondream to pick the perfect cover art
 5. You get a beautiful audio file with embedded album art
 
 ## Prerequisites
@@ -60,14 +62,8 @@ bun start
 
 Set your API key for better results:
 ```bash
-export MOONDREAM_API_KEY=your_key_here  # Get free key at https://console.moondream.ai
+export MOONDREAM_API_KEY=your_key_here  # Get key at https://console.moondream.ai
 ```
-
-Then follow the interactive prompts!
-
-## Motivation
-
-I download a lot of live sets and DJ mixes. I wanted a simple way to grab the audio with nice cover art automatically selected from the video, so I built this.
 
 ## Goals
 
@@ -86,43 +82,6 @@ I download a lot of live sets and DJ mixes. I wanted a simple way to grab the au
 - **yt-dlp** - Video downloading
 - **ffmpeg** - Audio conversion & metadata
 
-## Example
-
-```bash
-$ bun start
-
-╔══════════════════════════════════════════╗
-║       moonrip - Video to Audio           ║
-║   with AI-powered cover art selection    ║
-╚══════════════════════════════════════════╝
-
-Checking dependencies...
-   * yt-dlp found
-   * ffmpeg found
-   * Connected to local Moondream server
-
-Welcome to moonrip!
-
-Enter video URL: https://www.youtube.com/watch?v=dQw4w9WgXcQ
-
-Select audio format:
-  1. MP3 (most compatible)
-  2. M4A (better quality, smaller size)
-  3. WAV (lossless)
-
-Choice (1-3, default: 1): 1
-
-Cover art selection:
-  Describe your ideal cover image (or press Enter):
-
-Output directory (default: current): ~/Music
-
-Starting conversion...
-
-Complete!
-Saved to: /Users/you/Music/Rick Astley - Never Gonna Give You Up.mp3
-```
-
 ## Development
 
 Run tests:
@@ -130,12 +89,6 @@ Run tests:
 bun test
 ```
 
-See `CLAUDE.md` for detailed architecture and development notes.
-
 ## License
 
 MIT
-
-## Credits
-
-Built with [yt-dlp](https://github.com/yt-dlp/yt-dlp), [ffmpeg](https://ffmpeg.org), [Moondream](https://moondream.ai), [Effect](https://effect.website), and [Bun](https://bun.sh).
