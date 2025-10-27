@@ -65,10 +65,14 @@ export MOONDREAM_API_KEY=your_key_here  # Get free key at https://console.moondr
 
 Then follow the interactive prompts!
 
+## Motivation
+
+I download a lot of live sets and DJ mixes. I wanted a simple way to grab the audio with nice cover art automatically selected from the video, so I built this.
+
 ## Goals
 
 - **Simple UX** - Just paste a URL and answer a few questions
-- **Smart AI** - Automatically picks the best frame for cover art, or matches your description
+- **Visual selection** - Automatically picks the best frame for cover art, or matches your description
 - **High Quality** - Best available audio quality, properly tagged with metadata
 - **Type-Safe** - Built with Effect for robust error handling
 - **Fast** - Uses Bun for maximum performance
