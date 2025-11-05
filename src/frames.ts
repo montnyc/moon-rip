@@ -1,6 +1,6 @@
-import { Effect, Data } from "effect";
-import path from "path";
-import { mkdir } from "fs/promises";
+import { mkdir } from "node:fs/promises";
+import path from "node:path";
+import { Data, Effect } from "effect";
 
 export class FrameExtractionError extends Data.TaggedError("FrameExtractionError")<{
   message: string;
@@ -16,7 +16,7 @@ export interface Frame {
  */
 export const extractFrames = (
   videoPath: string,
-  count: number = 10
+  count = 10
 ): Effect.Effect<Frame[], FrameExtractionError> =>
   Effect.gen(function* () {
     const videoDir = path.dirname(videoPath);
@@ -58,7 +58,7 @@ export const extractFrames = (
           throw new Error("Failed to get video duration");
         }
 
-        return parseFloat(output.trim());
+        return Number.parseFloat(output.trim());
       },
       catch: (error) =>
         new FrameExtractionError({
@@ -115,7 +115,7 @@ export const extractFrames = (
     }
 
     // Clear progress line
-    process.stdout.write("\r" + " ".repeat(50) + "\r");
+    process.stdout.write(`\r${" ".repeat(50)}\r`);
 
     return frames;
   });

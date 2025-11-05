@@ -1,7 +1,7 @@
-import { Effect, Data } from "effect";
+import { readFile } from "node:fs/promises";
+import { Data, Effect } from "effect";
 import { vl as Moondream } from "moondream";
 import type { Frame } from "./frames";
-import { readFile } from "fs/promises";
 
 export class CoverArtSelectionError extends Data.TaggedError("CoverArtSelectionError")<{
   message: string;
@@ -26,9 +26,7 @@ export const selectCoverArt = (
     const endpoint = process.env.MOONDREAM_ENDPOINT;
     const apiKey = process.env.MOONDREAM_API_KEY;
 
-    const moondream = new Moondream(
-      endpoint ? { endpoint } : apiKey ? { apiKey } : {}
-    );
+    const moondream = new Moondream(endpoint ? { endpoint } : apiKey ? { apiKey } : {});
 
     // Analyze each frame
     const scoredFrames: ScoredFrame[] = [];
@@ -70,7 +68,7 @@ export const selectCoverArt = (
             });
             const answerText = typeof answer === "string" ? answer : answer.answer || "0";
             const match = answerText.match(/\d+/);
-            return match ? parseInt(match[0]!, 10) : 0;
+            return match ? Number.parseInt(match[0]!, 10) : 0;
           },
           catch: () => 0,
         });
@@ -87,7 +85,7 @@ export const selectCoverArt = (
             });
             const answerText = typeof answer === "string" ? answer : answer.answer || "0";
             const match = answerText.match(/\d+/);
-            return match ? parseInt(match[0]!, 10) : 0;
+            return match ? Number.parseInt(match[0]!, 10) : 0;
           },
           catch: () => 0,
         });

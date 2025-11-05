@@ -1,5 +1,5 @@
-import { Effect, Data } from "effect";
-import path from "path";
+import path from "node:path";
+import { Data, Effect } from "effect";
 import type { VideoInfo } from "./download";
 
 export class ConversionError extends Data.TaggedError("ConversionError")<{
@@ -97,7 +97,9 @@ export const convertAudio = (
               if (durationMatch) {
                 const [_, hours, minutes, seconds] = durationMatch;
                 duration =
-                  parseInt(hours) * 3600 + parseInt(minutes) * 60 + parseFloat(seconds);
+                  Number.parseInt(hours) * 3600 +
+                  Number.parseInt(minutes) * 60 +
+                  Number.parseFloat(seconds);
               }
             }
 
@@ -107,7 +109,9 @@ export const convertAudio = (
               if (timeMatch) {
                 const [_, hours, minutes, seconds] = timeMatch;
                 const currentTime =
-                  parseInt(hours) * 3600 + parseInt(minutes) * 60 + parseFloat(seconds);
+                  Number.parseInt(hours) * 3600 +
+                  Number.parseInt(minutes) * 60 +
+                  Number.parseFloat(seconds);
                 const progress = Math.min(100, (currentTime / duration) * 100).toFixed(1);
 
                 if (progress !== lastProgress) {
@@ -127,15 +131,19 @@ export const convertAudio = (
 
         // Clear progress line
         if (lastProgress) {
-          process.stdout.write("\r" + " ".repeat(50) + "\r");
+          process.stdout.write(`\r${" ".repeat(50)}\r`);
         }
 
         if (proc.exitCode !== 0) {
-          const error = new TextDecoder().decode(
-            new Uint8Array(
-              stderrChunks.reduce((acc, chunk) => [...acc, ...chunk], [] as number[])
-            )
-          );
+          // Efficiently concatenate Uint8Arrays
+          const totalLength = stderrChunks.reduce((acc, chunk) => acc + chunk.length, 0);
+          const combined = new Uint8Array(totalLength);
+          let offset = 0;
+          for (const chunk of stderrChunks) {
+            combined.set(chunk, offset);
+            offset += chunk.length;
+          }
+          const error = new TextDecoder().decode(combined);
           throw new Error(`ffmpeg failed: ${error}`);
         }
       },

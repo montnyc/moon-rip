@@ -1,5 +1,5 @@
+import { createInterface } from "node:readline";
 import { Effect } from "effect";
-import { createInterface } from "readline";
 
 export interface InteractiveInputs {
   url: string;
@@ -75,7 +75,7 @@ export const getInteractiveInputs = (): Effect.Effect<InteractiveInputs, Error> 
     // Get output directory
     const outputDir = yield* Effect.tryPromise({
       try: async () => {
-        const dir = await question(`\nOutput directory (default: current): `);
+        const dir = await question("\nOutput directory (default: current): ");
         if (!dir) return process.cwd();
 
         // Expand ~ to home directory

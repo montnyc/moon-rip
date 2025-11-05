@@ -4,9 +4,9 @@
  * Handles graceful shutdown of both processes on Ctrl+C
  */
 
+import { existsSync } from "node:fs";
+import path from "node:path";
 import { spawn } from "bun";
-import { existsSync } from "fs";
-import path from "path";
 
 const MOONDREAM_DIR = path.join(process.cwd(), "moondream-station");
 

@@ -1,6 +1,6 @@
-import { describe, it, expect } from "bun:test";
-import { parseArgs, InvalidArgumentsError } from "./args";
+import { describe, expect, it } from "bun:test";
 import { Effect } from "effect";
+import { InvalidArgumentsError, parseArgs } from "./args";
 
 describe("parseArgs", () => {
   it("should parse valid YouTube URL", async () => {
@@ -17,11 +17,9 @@ describe("parseArgs", () => {
 
   it("should parse URL with prompt flag", async () => {
     const result = await Effect.runPromise(
-      parseArgs([
-        "https://youtu.be/dQw4w9WgXcQ",
-        "--prompt",
-        "vibrant concert scene",
-      ]).pipe(Effect.either)
+      parseArgs(["https://youtu.be/dQw4w9WgXcQ", "--prompt", "vibrant concert scene"]).pipe(
+        Effect.either
+      )
     );
 
     expect(result._tag).toBe("Right");
@@ -42,9 +40,7 @@ describe("parseArgs", () => {
   });
 
   it("should reject invalid URL", async () => {
-    const result = await Effect.runPromise(
-      parseArgs(["not-a-url"]).pipe(Effect.either)
-    );
+    const result = await Effect.runPromise(parseArgs(["not-a-url"]).pipe(Effect.either));
 
     expect(result._tag).toBe("Left");
     if (result._tag === "Left") {

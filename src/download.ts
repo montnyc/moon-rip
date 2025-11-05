@@ -1,13 +1,13 @@
-import { Effect, Data } from "effect";
-import path from "path";
-import { mkdir } from "fs/promises";
+import { mkdir } from "node:fs/promises";
+import path from "node:path";
+import { Data, Effect } from "effect";
 
 export class DownloadError extends Data.TaggedError("DownloadError")<{
   message: string;
 }> {}
 
 export interface VideoInfo {
-  videoPath: string;  // Path to video file (for frame extraction)
+  videoPath: string; // Path to video file (for frame extraction)
   audioPath?: string; // Path to audio file if separate (e.g., mp3)
   title: string;
   artist?: string;
@@ -87,15 +87,19 @@ export const downloadVideo = (url: string): Effect.Effect<VideoInfo, DownloadErr
 
         // Clear progress line
         if (lastProgress) {
-          process.stdout.write("\r" + " ".repeat(50) + "\r");
+          process.stdout.write(`\r${" ".repeat(50)}\r`);
         }
 
         if (proc.exitCode !== 0) {
-          const errorOutput = new TextDecoder().decode(
-            new Uint8Array(
-              stderrChunks.reduce((acc, chunk) => [...acc, ...chunk], [] as number[])
-            )
-          );
+          // Efficiently concatenate Uint8Arrays
+          const totalLength = stderrChunks.reduce((acc, chunk) => acc + chunk.length, 0);
+          const combined = new Uint8Array(totalLength);
+          let offset = 0;
+          for (const chunk of stderrChunks) {
+            combined.set(chunk, offset);
+            offset += chunk.length;
+          }
+          const errorOutput = new TextDecoder().decode(combined);
           throw new Error(`yt-dlp failed (exit code ${proc.exitCode}): ${errorOutput}`);
         }
 
@@ -113,19 +117,20 @@ export const downloadVideo = (url: string): Effect.Effect<VideoInfo, DownloadErr
     // Find the downloaded files
     const files = yield* Effect.tryPromise({
       try: async () => {
-        const allFiles = await Array.fromAsync(
-          new Bun.Glob("*").scan({ cwd: tempDir })
-        );
+        const allFiles = await Array.fromAsync(new Bun.Glob("*").scan({ cwd: tempDir }));
 
         return {
           all: allFiles,
-          videos: allFiles.filter(f =>
-            (f.endsWith(".mp4") || f.endsWith(".mkv") || f.endsWith(".webm") || f.endsWith(".avi")) &&
-            !f.includes("_converted")
+          videos: allFiles.filter(
+            (f) =>
+              (f.endsWith(".mp4") ||
+                f.endsWith(".mkv") ||
+                f.endsWith(".webm") ||
+                f.endsWith(".avi")) &&
+              !f.includes("_converted")
           ),
-          audio: allFiles.filter(f =>
-            (f.endsWith(".mp3") || f.endsWith(".m4a")) &&
-            !f.includes("_converted")
+          audio: allFiles.filter(
+            (f) => (f.endsWith(".mp3") || f.endsWith(".m4a")) && !f.includes("_converted")
           ),
         };
       },

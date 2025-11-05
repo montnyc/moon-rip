@@ -1,4 +1,4 @@
-import { Effect, Data } from "effect";
+import { Data, Effect } from "effect";
 
 export class MissingDependencyError extends Data.TaggedError("MissingDependencyError")<{
   dependency: string;

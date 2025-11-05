@@ -1,15 +1,15 @@
 #!/usr/bin/env bun
-import { Effect, Console } from "effect";
-import { rm } from "fs/promises";
-import path from "path";
-import { checkDependencies } from "./src/utils/dependencies";
-import { getInteractiveInputs } from "./src/interactive";
-import { downloadVideo } from "./src/download";
+import { rm } from "node:fs/promises";
+import path from "node:path";
+import { Console, Effect } from "effect";
 import { convertAudio } from "./src/convert";
-import { extractFrames } from "./src/frames";
 import { selectCoverArt } from "./src/cover-art";
+import { downloadVideo } from "./src/download";
 import { embedCoverArt } from "./src/embed";
+import { extractFrames } from "./src/frames";
+import { getInteractiveInputs } from "./src/interactive";
 import { startMoondreamStation, stopMoondreamStation } from "./src/moondream-manager";
+import { checkDependencies } from "./src/utils/dependencies";
 
 const showProgress = (step: string) => {
   console.log(`\n${step}...`);
@@ -35,7 +35,7 @@ const main = Effect.gen(function* () {
     // Get interactive inputs from user
     const inputs = yield* getInteractiveInputs();
 
-    console.log("\n" + "=".repeat(50));
+    console.log(`\n${"=".repeat(50)}`);
     console.log("Starting conversion...");
     console.log("=".repeat(50));
 
@@ -47,7 +47,7 @@ const main = Effect.gen(function* () {
     // Convert to selected format
     showProgress(`Converting to ${inputs.format.toUpperCase()}`);
     const audioPath = yield* convertAudio(videoInfo, inputs.format);
-    console.log(`   * Conversion complete`);
+    console.log("   * Conversion complete");
 
     // Extract frames for cover art
     showProgress("Extracting frames from video");
@@ -61,14 +61,14 @@ const main = Effect.gen(function* () {
       showProgress("Analyzing frames with AI");
     }
     const coverArt = yield* selectCoverArt(frames, inputs.imagePrompt);
-    console.log(`   * Selected best cover art`);
+    console.log("   * Selected best cover art");
 
     // Embed cover art into audio file
     showProgress("Embedding cover art");
     const finalPath = yield* embedCoverArt(audioPath, coverArt, inputs.outputDir);
 
     // Success!
-    console.log("\n" + "=".repeat(50));
+    console.log(`\n${"=".repeat(50)}`);
     console.log("Complete!");
     console.log("=".repeat(50));
     console.log(`\nSaved to: ${finalPath}\n`);

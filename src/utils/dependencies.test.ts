@@ -1,6 +1,6 @@
-import { describe, it, expect } from "bun:test";
-import { checkDependencies, MissingDependencyError } from "./dependencies";
+import { describe, expect, it } from "bun:test";
 import { Effect } from "effect";
+import { MissingDependencyError, checkDependencies } from "./dependencies";
 
 describe("checkDependencies", () => {
   it("should succeed if yt-dlp and ffmpeg are installed", async () => {

@@ -1,6 +1,6 @@
-import { Effect, Data } from "effect";
-import path from "path";
-import { copyFile, unlink } from "fs/promises";
+import { copyFile, unlink } from "node:fs/promises";
+import path from "node:path";
+import { Data, Effect } from "effect";
 
 export class EmbedError extends Data.TaggedError("EmbedError")<{
   message: string;

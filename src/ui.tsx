@@ -1,5 +1,5 @@
+import { Box, Text, render } from "@opentui/react";
 import React from "react";
-import { render, Text, Box } from "@opentui/react";
 
 interface ProgressProps {
   step: string;
