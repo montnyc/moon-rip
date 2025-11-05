@@ -53,17 +53,50 @@ export const downloadVideo = (url: string): Effect.Effect<VideoInfo, DownloadErr
           }
         );
 
+        // Read stderr for progress updates
+        const stderrReader = proc.stderr.getReader();
+        const stderrChunks: Uint8Array[] = [];
+        let lastProgress = "";
+
+        const readStderr = async () => {
+          while (true) {
+            const { done, value } = await stderrReader.read();
+            if (done) break;
+
+            stderrChunks.push(value);
+            const text = new TextDecoder().decode(value);
+
+            // Parse progress lines (yt-dlp format: [download]  45.2% of ~123.45MiB at 1.23MiB/s ETA 00:12)
+            const progressMatch = text.match(/\[download\]\s+(\d+\.?\d*)%/);
+            if (progressMatch) {
+              const progress = progressMatch[1];
+              if (progress !== lastProgress) {
+                process.stdout.write(`\r   Progress: ${progress}%`);
+                lastProgress = progress;
+              }
+            }
+          }
+        };
+
+        // Start reading stderr in background
+        const stderrPromise = readStderr();
+
         const output = await new Response(proc.stdout).text();
-        const errorOutput = await new Response(proc.stderr).text();
+        await stderrPromise;
         await proc.exited;
 
-        if (proc.exitCode !== 0) {
-          throw new Error(`yt-dlp failed (exit code ${proc.exitCode}): ${errorOutput}`);
+        // Clear progress line
+        if (lastProgress) {
+          process.stdout.write("\r" + " ".repeat(50) + "\r");
         }
 
-        // Log stderr for debugging (yt-dlp uses stderr for progress)
-        if (errorOutput) {
-          console.log("   yt-dlp output:", errorOutput.split("\n").slice(-3).join("\n"));
+        if (proc.exitCode !== 0) {
+          const errorOutput = new TextDecoder().decode(
+            new Uint8Array(
+              stderrChunks.reduce((acc, chunk) => [...acc, ...chunk], [] as number[])
+            )
+          );
+          throw new Error(`yt-dlp failed (exit code ${proc.exitCode}): ${errorOutput}`);
         }
 
         return output.trim();

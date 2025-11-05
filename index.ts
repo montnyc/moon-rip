@@ -1,9 +1,11 @@
 #!/usr/bin/env bun
 import { Effect, Console } from "effect";
+import { rm } from "fs/promises";
+import path from "path";
 import { checkDependencies } from "./src/utils/dependencies";
 import { getInteractiveInputs } from "./src/interactive";
 import { downloadVideo } from "./src/download";
-import { convertToMp3 } from "./src/convert";
+import { convertAudio } from "./src/convert";
 import { extractFrames } from "./src/frames";
 import { selectCoverArt } from "./src/cover-art";
 import { embedCoverArt } from "./src/embed";
@@ -44,7 +46,7 @@ const main = Effect.gen(function* () {
 
     // Convert to selected format
     showProgress(`Converting to ${inputs.format.toUpperCase()}`);
-    const audioPath = yield* convertToMp3(videoInfo); // TODO: Support other formats
+    const audioPath = yield* convertAudio(videoInfo, inputs.format);
     console.log(`   * Conversion complete`);
 
     // Extract frames for cover art
@@ -75,6 +77,15 @@ const main = Effect.gen(function* () {
   } finally {
     // Always clean up Moondream Station
     yield* stopMoondreamStation(moondreamProcess);
+
+    // Clean up temp directory
+    yield* Effect.tryPromise({
+      try: async () => {
+        const tempDir = path.join(process.cwd(), ".moonrip-temp");
+        await rm(tempDir, { recursive: true, force: true });
+      },
+      catch: () => void 0, // Ignore cleanup errors
+    });
   }
 });
 
