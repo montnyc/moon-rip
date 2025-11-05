@@ -7,15 +7,17 @@ export class EmbedError extends Data.TaggedError("EmbedError")<{
 }> {}
 
 /**
- * Embed cover art into MP3 file and move to final destination
+ * Embed cover art into audio file and move to final destination
+ * Supports MP3, M4A, and WAV formats
  */
 export const embedCoverArt = (
-  mp3Path: string,
+  audioPath: string,
   coverArtPath: string,
   outputDir?: string
 ): Effect.Effect<string, EmbedError> =>
   Effect.gen(function* () {
-    const tempOutput = mp3Path.replace(".mp3", "_with_cover.mp3");
+    const ext = path.extname(audioPath);
+    const tempOutput = audioPath.replace(ext, `_with_cover${ext}`);
 
     // Embed the cover art using ffmpeg
     yield* Effect.tryPromise({
@@ -24,7 +26,7 @@ export const embedCoverArt = (
           [
             "ffmpeg",
             "-i",
-            mp3Path,
+            audioPath,
             "-i",
             coverArtPath,
             "-map",
@@ -62,9 +64,9 @@ export const embedCoverArt = (
     });
 
     // Determine final output path
-    const basename = path.basename(mp3Path, ".mp3");
+    const basename = path.basename(audioPath, ext);
     const finalDir = outputDir || process.cwd();
-    const finalPath = path.join(finalDir, `${basename}.mp3`);
+    const finalPath = path.join(finalDir, `${basename}${ext}`);
 
     // Copy to final location
     yield* Effect.tryPromise({

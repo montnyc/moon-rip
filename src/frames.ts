@@ -1,5 +1,6 @@
 import { Effect, Data } from "effect";
 import path from "path";
+import { mkdir } from "fs/promises";
 
 export class FrameExtractionError extends Data.TaggedError("FrameExtractionError")<{
   message: string;
@@ -23,7 +24,7 @@ export const extractFrames = (
 
     // Create frames directory
     yield* Effect.tryPromise({
-      try: () => Bun.write(path.join(frameDir, ".keep"), ""),
+      try: () => mkdir(frameDir, { recursive: true }),
       catch: (error) =>
         new FrameExtractionError({
           message: `Failed to create frames directory: ${error}`,
@@ -73,6 +74,9 @@ export const extractFrames = (
       const timestamp = interval * i;
       const framePath = path.join(frameDir, `frame_${i.toString().padStart(3, "0")}.jpg`);
 
+      // Show progress
+      process.stdout.write(`\r   Extracting frame ${i}/${count}...`);
+
       yield* Effect.tryPromise({
         try: async () => {
           const proc = Bun.spawn(
@@ -109,6 +113,9 @@ export const extractFrames = (
 
       frames.push({ path: framePath, timestamp });
     }
+
+    // Clear progress line
+    process.stdout.write("\r" + " ".repeat(50) + "\r");
 
     return frames;
   });
